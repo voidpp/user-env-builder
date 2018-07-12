@@ -1,0 +1,14 @@
+
+- name: install packages
+  apt:
+    name: "{{item}}"
+  with_items: "{{packages}}"
+
+- name: check vcprompt
+  stat:
+    path: ~/bin/vcprompt
+  register: vcprompt
+
+- name: build vcprompt
+  include_tasks: vcprompt.yaml
+  when: not vcprompt.stat.exists

@@ -1,0 +1,23 @@
+
+- name: install homebrew
+  command: /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+- name: install common packages
+  homebrew:
+    name: "{{item}}"
+  with_items: "{{packages}}"
+
+- name: install custom packages
+  homebrew:
+    name: "{{item}}"
+  with_items:
+    - vcprompt
+    - bash-completion
+
+- name: copy macos only scripts
+  copy: "{{item}}"
+    src: "{{item}}"
+    dest: "~/bin/{{item}}"
+  with_items:
+    - imgcat
+    - netstat

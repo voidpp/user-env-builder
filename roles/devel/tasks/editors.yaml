@@ -1,0 +1,17 @@
+
+- stat:
+    path: "{{vscode_settings_file}}"
+  register: vscode_settings_file_stat
+
+- name: copy vscode settings file
+  copy:
+    src: vscode_settings.json
+    dest: "{{vscode_settings_file}}/settings.json"
+  when: vscode_settings_file_stat.stat.exists
+
+- name: copy .vimrc
+  copy:
+    src: .vimrc
+    dest: ~/.vimrc
+
+# TODO: install vscode

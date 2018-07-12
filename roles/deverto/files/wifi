@@ -1,0 +1,69 @@
+#!/usr/local/bin/python3
+
+import re
+from subprocess import check_output
+from collections import OrderedDict
+from tabulate import tabulate
+
+airport_output = check_output(['/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport', '-I'])
+
+data = {}
+
+mac_labels = {
+    '06:18:D6:03:63:D8': 'Center (5G)',
+    '04:18:D6:02:63:D8': 'Center',
+    'DE:9F:DB:1B:00:86': 'Right (dev) (5G)',
+    'DC:9F:DB:1A:00:86': 'Right (dev)',
+    'DE:9F:DB:1B:07:1B': 'Left (sys) (5G)',
+    'DC:9F:DB:1A:07:1B': 'Left (sys)',
+}
+
+for line in airport_output.decode('utf8').split('\n'):
+    if len(line) > 2:
+        key, value = line.split(': ')
+        data[key.strip()] = value.strip()
+
+network_output = check_output(['ifconfig', 'en0']).decode('utf8')
+
+mac_match = re.search('ether ([\d:\-a-fA-F]{10,17})', network_output, re.MULTILINE)
+if mac_match is None:
+    exit(42)
+
+data['client_mac'] = mac_match.group(1)
+
+ipv4_match = re.search('inet ([\d\.]{7,15})', network_output, re.MULTILINE)
+if ipv4_match is None:
+    exit(42)
+
+data['client_ipv4'] =  ipv4_match.group(1)
+
+
+router_ip = re.search('gateway: ([\d\.]{7,15})', check_output(['route', 'get', 'default']).decode('utf8'), re.MULTILINE)
+
+data['router_ip'] = router_ip.group(1)
+
+def mac_format(v):
+    parts = v.split(':')
+    mac = ':'.join([p.zfill(2).upper() for p in parts])
+    label = mac_labels.get(mac)
+    return mac + (' - {}'.format(label) if label else '')
+
+labels = OrderedDict([
+    ('client_ipv4', ('Client IPv4', None)),
+    ('client_mac', ('Client MAC', mac_format)),
+    ('SSID', ('SSID', None)),
+    ('BSSID', ('AP MAC', mac_format)),
+    ('agrCtlRSSI', ('Signal', lambda x: x+' dBm')),
+    ('router_ip', ('Router IPv4', None)),
+])
+
+table = []
+
+for key, (label, formatter) in labels.items():
+    val = data[key]
+    if formatter is not None:
+        val = formatter(val)
+    table.append([label, val])
+
+
+print(tabulate(table, tablefmt = 'fancy_grid'))

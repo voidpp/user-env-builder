@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+import json
+import os
+from collections import OrderedDict
+from argparse import ArgumentParser
+
+parser = ArgumentParser()
+
+parser.add_argument("-p", "--path", help = "the path of the virtual environment", default = os.environ.get('VIRTUAL_ENV', None))
+parser.add_argument("-w", "--working-dir", help = "the working directory", default = os.getcwd())
+
+args = parser.parse_args()
+
+virtual_environment_path = args.path
+
+new_python_path = "{}/bin/python".format(virtual_environment_path)
+
+if not os.path.isfile(new_python_path):
+    print("'{}' is not a valid virtual env path!".format(args.path))
+    exit(42)
+
+# add auto `cd` to postactivate script
+with open("{}/bin/postactivate".format(virtual_environment_path), 'a') as f:
+    f.write("\ncd {}\n".format(args.working_dir))
+
+print("Auto directory changer script added")

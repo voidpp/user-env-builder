@@ -1,0 +1,4 @@
+
+bash_rc_file: ~/.bash_profile
+
+vscode_settings_file: "~/Library/Application Support/Code/User"

@@ -1,0 +1,23 @@
+
+- name: copy .bashrc_extend
+  copy:
+    src: .bashrc
+    dest: ~/.bashrc_extend
+
+- name: check {{bash_rc_file}}
+  stat:
+    path: "{{bash_rc_file}}"
+  register: bashrc
+
+- name: create {{bash_rc_file}} if not exists
+  copy:
+    content: ""
+    path: "{{bash_rc_file}}"
+    force: no
+  when: not bashrc.stat.exists
+
+- name: source ~/.bashrc_extend to {{bash_rc_file}}
+  lineinfile:
+    path: "{{bash_rc_file}}"
+    regexp: "^source ~/.bashrc_extend"
+    line: source ~/.bashrc_extend

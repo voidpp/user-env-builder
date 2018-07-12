@@ -1,0 +1,37 @@
+#!/usr/bin/python3
+
+from argparse import ArgumentParser, ArgumentTypeError
+from colorsys import hls_to_rgb
+import requests
+
+class Ranged(object):
+
+    def __init__(self, min_, max_):
+        self.min = min_
+        self.max = max_
+
+    def __call__(self, data):
+        d = int(data)
+        if d < self.min:
+            raise ArgumentTypeError("to low")
+        if d > self.max:
+            raise ArgumentTypeError("to high")
+        return d
+
+parser = ArgumentParser()
+parser.add_argument('lum', type = Ranged(0, 1000), help = 'between 0-1000')
+
+args = parser.parse_args()
+
+def send_color(lum):
+
+    hls = (0.12, lum / 1000.0, 0.61)
+    base = 4095
+
+    rgb = hls_to_rgb(*hls)
+
+    payload = "led[6]={}&led[5]={}&led[7]={}".format(*[int(c*base) for c in rgb])
+
+    requests.put('http://altivo.mag:52042/devices/lamp/led', data = payload)
+
+send_color(args.lum)

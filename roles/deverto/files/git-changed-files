@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+
+import os
+from dvrt_git_hooks.repo import Repo
+from argparse import ArgumentParser
+from tabulate import tabulate
+
+parser = ArgumentParser()
+
+parser.add_argument('path', nargs = '+')
+
+args = parser.parse_args()
+
+res = []
+
+for path in args.path:
+    if not os.path.isdir(path):
+        print("Not dir: '{}'".format(path))
+        continue
+
+    try:
+        repo = Repo(path)
+    except KeyError as e:
+        print("Maybe not git repo: '{}', ({})".format(path, e))
+
+    res.append((
+        path,
+        len(repo.get_changed_files()),
+        len(repo.get_staged_files()),
+        len(repo.get_untracked_files())
+    ))
+
+print(tabulate(res, tablefmt = 'psql', headers = ['Path', 'Changed', 'Staged', 'Untracked']))

@@ -1,0 +1,19 @@
+- name: install build packages
+  apt:
+    name: autoconf
+
+- name: clone vcprompt
+  hg:
+    clone: true
+    dest: /tmp/vcprompt
+    repo: https://bitbucket.org/gward/vcprompt
+
+- name: build vcprompt
+  command: "{{item}}"
+  args:
+    chdir: /tmp/vcprompt
+  with_items:
+    - autoconf
+    - ./configure
+    - make
+    - make install PREFIX=$HOME

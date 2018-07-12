@@ -1,0 +1,43 @@
+{
+    "explorer.confirmDelete": false,
+    "window.zoomLevel": 0,
+    "files.trimTrailingWhitespace": true,
+    "files.eol": "\n",
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.renderWhitespace": "none",
+    "python.linting.pylintArgs": ["--errors-only"],
+    "python.pythonPath": "${env:PYTHON_EXECUTABLE}",
+    "files.associations": {
+        "*.conf": "ini"
+    },
+    "files.exclude": {
+        "**/*.pyc": true,
+        "**/.cache": true,
+        "**/.pytest_cache": true,
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/__pycache__": true,
+        "**/*.egg-info": true
+    },
+    "files.insertFinalNewline": true,
+    "workbench.activityBar.visible": true,
+    "editor.emptySelectionClipboard": false,
+    "editor.rulers": [
+        142
+    ],
+    "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?",
+    "editor.minimap.enabled": false,
+    "window.title": "${folderName}${separator}${activeEditorShort}",
+    "typescript.check.npmIsInstalled": false,
+    "extensions.ignoreRecommendations": false,
+    "auto-close-tag.enableAutoCloseSelfClosingTag": true,
+    "gitlens.advanced.messages": {
+        "suppressShowKeyBindingsNotice": true,
+        "suppressWelcomeNotice": true
+    },
+    "gitlens.codeLens.enabled": false,
+    "explorer.confirmDragAndDrop": false
+}

@@ -1,0 +1,133 @@
+#!/usr/local/bin/python3
+
+import socket
+from socket import AF_INET, SOCK_STREAM, SOCK_DGRAM, AF_UNIX, AF_INET6
+import psutil
+from argparse import ArgumentParser
+from tabulate import tabulate
+from collections import namedtuple
+
+parser = ArgumentParser()
+
+parser.add_argument('-t', '--tcp', action = 'store_true', default = False)
+parser.add_argument('-u', '--udp', action = 'store_true', default = False)
+parser.add_argument('-x', '--unix', action = 'store_true', default = False)
+parser.add_argument('-l', '--listening', action = 'store_true', default = False)
+parser.add_argument('-n', '--numeric', action = 'store_true', default = False)
+parser.add_argument('-p', '--programs', action = 'store_true', default = False)
+parser.add_argument('-4', '--ipv4', action = 'store_true', default = False)
+parser.add_argument('-6', '--ipv6', action = 'store_true', default = False)
+parser.add_argument('-v', '--verbose', action = 'store_true', default = False)
+
+args = parser.parse_args()
+
+connections = []
+denied_processes = {}
+
+if args.verbose:
+    print('ARGS:', args)
+
+# unfortunately we cannot use the kind. if the value is tcp then the connections method should give back tcp4 and tcp6 but it is not...
+kind = 'all'
+
+for proc in psutil.process_iter():
+    try:
+        for conn in proc.connections(kind):
+            connections.append((proc, conn))
+    except psutil.AccessDenied:
+        name = proc.name()
+        if name not in denied_processes:
+            denied_processes[name] = []
+        denied_processes[name].append(proc)
+    except psutil.ZombieProcess:
+        pass
+
+def format_address(addr):
+    if not addr:
+        return ""
+    return "{}:{}".format(addr[0], addr[1])
+
+
+inet_rows = []
+unix_rows = []
+
+for (proc, conn) in connections:
+
+    is_unix = conn.family == AF_UNIX
+    is_tcp = conn.type == SOCK_STREAM
+    is_ipv4 = conn.family == AF_INET
+
+    if args.ipv4 and not is_ipv4:
+        continue
+
+    if args.ipv6 and is_ipv4:
+        continue
+
+    if args.unix and not is_unix:
+        continue
+
+    if args.tcp and (not is_tcp or is_unix):
+        continue
+
+    if args.udp and (is_tcp or is_unix):
+        continue
+
+    status = str(conn.status)
+
+    if args.listening:
+        if is_unix and not conn.laddr:
+            continue
+
+        if not is_unix:
+            if is_tcp and conn.status != psutil.CONN_LISTEN:
+                continue
+
+            if conn.type == SOCK_DGRAM and (conn.raddr or (conn.laddr and conn.laddr[1] == 0)):
+                continue
+
+    path = None
+    common_data = []
+
+    if is_unix:
+        if not conn.laddr and not conn.raddr:
+            continue
+        status = 'LISTEN' if conn.laddr else 'CONN'
+        path = conn.laddr if conn.laddr else conn.raddr
+
+        common_data += [path]
+
+    else:
+        if not args.listening:
+            common_data += [format_address(conn.raddr)]
+
+    if not args.listening:
+        common_data += [status]
+
+    sock_type = 'tcp' if is_tcp else 'udp'
+
+    common_data += ['{}/{}'.format(proc.pid, proc.name())] if args.programs else []
+
+    if is_unix:
+        unix_rows.append(['unix', sock_type] + common_data)
+    else:
+        proto = sock_type + ('4' if is_ipv4 else '6')
+        inet_rows.append([proto, format_address(conn.laddr)] + common_data)
+
+start_headers = ['Proto']
+end_haders = ['PID/Program'] if args.programs else []
+
+inet_headers = start_headers + ['Local address'] + ([] if args.listening else ['Remote address', 'Status']) + end_haders
+unix_headers = start_headers + ['Path', 'Type'] + ([] if args.listening else ['Status']) + end_haders
+
+if inet_rows:
+    print("Active Internet connections")
+    print(tabulate(inet_rows, headers = inet_headers))
+
+if unix_rows:
+    print("Active UNIX domain sockets")
+    print(tabulate(unix_rows, headers = unix_headers))
+
+if denied_processes:
+    print("Cannot get the connections for {} processes because of access denied. (get the list with -v)".format(len(denied_processes)))
+    if args.verbose:
+        print("Such as: {}".format(', '.join(sorted(["{}({})".format(name, ','.join([str(p.pid) for p in proc_list])) for name, proc_list in denied_processes.items()]))))

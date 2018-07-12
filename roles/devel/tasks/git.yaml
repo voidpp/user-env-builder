@@ -1,0 +1,23 @@
+
+- name: copy gitignore to user home
+  copy:
+    src: .gitignore
+    dest: ~/.gitignore
+
+- name: set user global gitignore
+  git_config:
+    name: core.excludesfile
+    scope: global
+    value: "{{ansible_env.HOME}}/.gitignore" # git config resolves "~" so "value: ~/.gitignore" always give changed flag
+
+- name: set git global user
+  git_config:
+    name: user.name
+    scope: global
+    value: "{{git_config.name}}"
+
+- name: set git global email
+  git_config:
+    name: user.email
+    scope: global
+    value: "{{git_config.email}}"

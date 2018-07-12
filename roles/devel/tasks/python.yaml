@@ -1,0 +1,31 @@
+
+- name: install some python deps
+  become: ansible_os_family != 'MacOsX'
+  pip:
+    name: "{{item}}"
+  with_items:
+    - virtualenvwrapper
+
+- name: copy little python scripts
+  copy:
+    src: "{{item}}"
+    dest: "~/bin/{{item}}"
+    mode: +x
+  with_items:
+    - create-virtualenv
+    - postmkvirtualenv
+
+- name: set PYTHON_EXECUTABLE to virtualenvs
+  lineinfile:
+    path: "~/.virtualenvs/post{{item}}"
+    regexp: "^export PYTHON_EXECUTABLE"
+    line: export PYTHON_EXECUTABLE=`which python`
+  with_items:
+    - activate
+    - deactivate
+
+- name: add custom hook to virtualenv's postmkvirtualenv
+  lineinfile:
+    path: ~/.virtualenvs/postmkvirtualenv
+    regexp: "^~/bin/postmkvirtualenv"
+    line: ~/bin/postmkvirtualenv

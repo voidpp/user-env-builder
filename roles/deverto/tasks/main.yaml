@@ -1,0 +1,28 @@
+
+- name: create pip folder
+  file:
+    path: ~/.pip/
+    state: directory
+
+- name: install pip conf
+  copy:
+    src: pip.conf
+    dest: ~/.pip/pip.conf
+
+- name: copy little scripts
+  copy:
+    src: "{{item}}"
+    dest: "~/bin/{{item}}"
+  with_items:
+    - git-changed-files
+    - tabulate
+
+- name: install some python deps
+  sudo: ansible_os_family != 'MacOsX'
+  pip:
+    name: "{{item}}"
+  with_items:
+    - dvrt-git-hooks
+    - tabulate
+
+

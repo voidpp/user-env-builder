@@ -1,0 +1,9 @@
+
+- name: install some python deps
+  sudo: ansible_os_family != 'MacOsX'
+  pip:
+    name: "{{item}}"
+  with_items:
+    - requests
+
+

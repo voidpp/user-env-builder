@@ -1,0 +1,19 @@
+
+- name: create user bin
+  file:
+    path: ~/bin
+    state: directory
+
+- name: "include platform specific variables for {{ansible_os_family}}"
+  include_vars: "{{ansible_os_family|lower}}.yaml"
+
+- import_tasks: bashrc.yaml
+
+- import_tasks: git.yaml
+
+- import_tasks: editors.yaml
+
+- name: "include platform specific tasks for {{ansible_os_family}}"
+  include_tasks: "{{ansible_os_family|lower}}.yaml"
+
+- import_tasks: python.yaml
