@@ -39,5 +39,6 @@
         "suppressWelcomeNotice": true
     },
     "gitlens.codeLens.enabled": false,
+    "gitlens.currentLine.enabled": false,
     "explorer.confirmDragAndDrop": false
 }

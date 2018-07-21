@@ -1,0 +1,37 @@
+
+- name: check brew presence
+  stat:
+    path: /usr/local/bin/brew
+  register: brew
+
+- block:
+    - name: download homebrew
+      get_url:
+        url: https://raw.githubusercontent.com/Homebrew/install/master/install
+        dest: /tmp/install-brew.rb
+
+    - name: install homebrew
+      command: /usr/bin/ruby -e /tmp/install-brew.rb
+  when: not brew.stat.exists
+
+- name: install common packages
+  homebrew:
+    name: "{{item}}"
+  with_items: "{{packages}}"
+
+- name: install custom packages
+  homebrew:
+    name: "{{item}}"
+  with_items:
+    - vcprompt
+    - bash-completion
+    - pyenv
+    - the_silver_searcher
+
+- name: copy macos only scripts
+  copy:
+    src: "{{item}}"
+    dest: "~/bin/{{item}}"
+  with_items:
+    - imgcat
+    - netstat

@@ -1,0 +1,7 @@
+# /usr/local/bin/pyenv
+
+# - name: check pyenv install
+
+# TODO: install python 3.5.x, 3.6.x, 3.7.x
+
+# add symlink for these pythons to  ~/bin

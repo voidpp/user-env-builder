@@ -1,10 +1,16 @@
 
-- name: install packages
+- name: install common packages
   apt:
     name: "{{item}}"
   with_items: "{{packages}}"
 
-- name: check vcprompt
+- name: install custom packages
+  apt:
+    name: "{{item}}"
+  with_items:
+    - silversearcher-ag
+
+- name: check vcprompt presence
   stat:
     path: ~/bin/vcprompt
   register: vcprompt
@@ -12,3 +18,7 @@
 - name: build vcprompt
   include_tasks: vcprompt.yaml
   when: not vcprompt.stat.exists
+
+
+# - name: install pyenv
+# TODO

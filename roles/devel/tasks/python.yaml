@@ -1,6 +1,6 @@
 
 - name: install some python deps
-  become: ansible_os_family != 'MacOsX'
+  become: ansible_os_family != 'Darwin'
   pip:
     name: "{{item}}"
   with_items:
@@ -29,3 +29,5 @@
     path: ~/.virtualenvs/postmkvirtualenv
     regexp: "^~/bin/postmkvirtualenv"
     line: ~/bin/postmkvirtualenv
+
+- import_tasks: pyenv.yaml
