@@ -43,6 +43,7 @@ alias git.graph='git log --oneline --graph --decorate --all'
 alias git.ds='git diff --cached'
 alias l="ls -lh"
 alias cve="create-virtualenv"
+alias git.ca='git commit -a --amend -C HEAD'
 
 export EDITOR=vim
 export COLUMNS
