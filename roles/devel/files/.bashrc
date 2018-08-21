@@ -49,3 +49,10 @@ export EDITOR=vim
 export COLUMNS
 
 export PYTHON_EXECUTABLE=`which python3`
+
+reworkon ()
+{
+    if [ $VIRTUAL_ENV ]; then
+        workon `basename $VIRTUAL_ENV`
+    fi
+}
