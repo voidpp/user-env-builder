@@ -6,4 +6,7 @@
   with_items:
     - requests
 
-
+- name: copy lamp cli
+  copy:
+    src: lamp
+    dest: ~/bin/lamp
