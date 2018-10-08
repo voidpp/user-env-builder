@@ -12,7 +12,7 @@
 - name: create {{bash_rc_file}} if not exists
   copy:
     content: ""
-    path: "{{bash_rc_file}}"
+    dest: "{{bash_rc_file}}"
     force: no
   when: not bashrc.stat.exists
 
