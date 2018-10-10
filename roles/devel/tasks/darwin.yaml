@@ -16,18 +16,16 @@
 
 - name: install common packages
   homebrew:
-    name: "{{item}}"
-  with_items: "{{packages}}"
+    name: "{{packages}}"
 
 - name: install custom packages
   homebrew:
-    name: "{{item}}"
-  with_items:
-    - vcprompt
-    - bash-completion
-    - git
-    - pyenv
-    - the_silver_searcher
+    name:
+      - vcprompt
+      - bash-completion
+      - git
+      - pyenv
+      - the_silver_searcher
 
 - name: copy macos only scripts
   copy:
@@ -36,3 +34,19 @@
   with_items:
     - imgcat
     - netstat
+
+- name:
+  homebrew_cask:
+    name:
+      - iterm2
+      - visual-studio-code
+
+- name: create custom iterm2 config dir
+  file:
+    path: ~/.config/iterm2
+    state: directory
+
+- name: copy iterm2 config
+  copy:
+    src: com.googlecode.iterm2.plist
+    dest: ~/.config/iterm2/com.googlecode.iterm2.plist
