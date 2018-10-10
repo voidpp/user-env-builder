@@ -2,9 +2,7 @@
 - name: install some python deps
   become: ansible_os_family != 'Darwin'
   pip:
-    name: "{{item}}"
-  with_items:
-    - virtualenvwrapper
+    name: [virtualenvwrapper]
 
 - name: copy little python scripts
   copy:

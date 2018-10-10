@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!{{python_executable}}
 
 from argparse import ArgumentParser, ArgumentTypeError
 from colorsys import hls_to_rgb

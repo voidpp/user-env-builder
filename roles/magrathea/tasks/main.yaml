@@ -2,11 +2,21 @@
 - name: install some python deps
   sudo: ansible_os_family != 'Darwin'
   pip:
-    name: "{{item}}"
-  with_items:
-    - requests
+    name: [requests, progressbar]
 
-- name: copy lamp cli
-  copy:
-    src: lamp
-    dest: ~/bin/lamp
+- name: get current python
+  command: which python
+  register: which_python
+  changed_when: false
+
+- set_fact:
+    python_executable: "{{ which_python.stdout }}"
+
+- name: install cli tools
+  template:
+    src: "{{ item }}"
+    dest: "~/bin/{{ item }}"
+    mode: +x
+  with_items:
+    - lamp
+    - sleep-timer

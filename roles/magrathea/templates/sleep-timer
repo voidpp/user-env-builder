@@ -1,0 +1,75 @@
+#!{{python_executable}}
+
+import re
+import sys
+from argparse import ArgumentParser, ArgumentTypeError
+from datetime import datetime, timedelta
+from subprocess import check_call
+from time import sleep
+
+import progressbar
+
+times = {
+    # 'd': 60 * 60 * 24,
+    'h': 60 * 60,
+    'm': 60,
+    's': 1,
+}
+
+time_pattern = re.compile('([\d]{1,})(%s)' % '|'.join(times.keys()))
+
+def time(val):
+    res = time_pattern.findall(val)
+
+    if not res:
+        raise ArgumentTypeError('wrong format')
+
+    secs = 0
+
+    for (v, unit) in res:
+        secs += int(v) * times[unit]
+
+    return secs
+
+parser = ArgumentParser()
+
+parser.add_argument('time', type = time, help = "time duration in xhxmxs format, example: 1h30m")
+parser.add_argument('-f', '--feedback', help = "feedback update time (default: %(default)sm)", default = '1s', type = time)
+
+args = parser.parse_args()
+
+
+end_time = datetime.now() + timedelta(seconds = args.time)
+
+print(f"The system will sleep at {end_time.strftime('%H:%M')}")
+
+class ETA(progressbar.Timer):
+
+    def update(self, pbar):
+        diff = pbar.maxval - pbar.currval
+        r = []
+        for unit, div in times.items():
+            v = int(diff / float(div))
+            diff = diff % div
+            r.append('{:02d}'.format(v))
+        return 'Remaining ' + ':'.join(r)
+
+bar = progressbar.ProgressBar(maxval=args.time, widgets=[progressbar.Bar('█', '[', ']', '-'), ' ', ETA()])
+bar.start()
+
+try:
+    if args.feedback:
+        secs = args.time
+        while secs > 0:
+            bar.update(args.time - secs)
+            sleep(args.feedback if secs > 0 else abs(secs))
+            secs -= args.feedback
+    else:
+        sleep(args.time)
+
+    bar.finish()
+    print('Put the system to sleep!' + ' ' * 10)
+    check_call(['pmset', 'sleepnow'])
+except KeyboardInterrupt:
+    bar.finish()
+    print("Cancelled...")

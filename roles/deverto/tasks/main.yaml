@@ -20,9 +20,6 @@
 - name: install some python deps
   sudo: ansible_os_family != 'Darwin'
   pip:
-    name: "{{item}}"
-  with_items:
-    - dvrt-git-hooks
-    - tabulate
+    name: [dvrt-git-hooks, tabulate]
 
 
