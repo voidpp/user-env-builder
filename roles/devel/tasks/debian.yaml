@@ -1,14 +1,11 @@
 
 - name: install common packages
   apt:
-    name: "{{item}}"
-  with_items: "{{packages}}"
+    name: "{{packages}}"
 
 - name: install custom packages
   apt:
-    name: "{{item}}"
-  with_items:
-    - silversearcher-ag
+    name: [silversearcher-ag]
 
 - name: check vcprompt presence
   stat:
