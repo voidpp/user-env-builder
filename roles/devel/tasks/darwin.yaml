@@ -25,6 +25,7 @@
   with_items:
     - vcprompt
     - bash-completion
+    - git
     - pyenv
     - the_silver_searcher
 
