@@ -6,3 +6,4 @@ packages:
   - screen
   - python3
   - mercurial
+  - htop
