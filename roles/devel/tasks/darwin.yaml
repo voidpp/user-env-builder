@@ -50,3 +50,13 @@
   copy:
     src: com.googlecode.iterm2.plist
     dest: ~/.config/iterm2/com.googlecode.iterm2.plist
+
+- name: create user KeyBindings dir
+  file:
+    path: ~/Library/KeyBindings
+    state: directory
+
+- name: copy custom keymap for classic home-end behaviour
+  copy:
+    src: DefaultKeyBinding.dict
+    dest: ~/Library/KeyBindings/DefaultKeyBinding.dict
