@@ -56,3 +56,5 @@ reworkon ()
         workon `basename $VIRTUAL_ENV`
     fi
 }
+
+[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
