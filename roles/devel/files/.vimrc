@@ -8,5 +8,6 @@ set tabstop=4
 set mouse=n
 set shiftwidth=4
 set incsearch
+set backspace=indent,eol,start
 syntax on
 filetype plugin on
