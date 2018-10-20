@@ -36,14 +36,16 @@ __get_prompt() {
 PROMPT_COMMAND=__get_prompt
 
 alias c='echo > /dev/null'
-alias git.update='git stash && git pull --rebase && git submodule update && git stash pop'
-alias git.vimdiff='git diff HEAD  | vim -'
-alias git.pullr='git pull --rebase && git submodule init && git submodule update'
-alias git.graph='git log --oneline --graph --decorate --all'
-alias git.ds='git diff --cached'
-alias l="ls -lh"
 alias cve="create-virtualenv"
 alias git.ca='git commit -a --amend -C HEAD'
+alias git.ds='git diff --cached'
+alias git.graph='git log --oneline --graph --decorate --all'
+alias git.pullr='git pull --rebase && git submodule init && git submodule update'
+alias git.update='git stash && git pull --rebase && git submodule update && git stash pop'
+alias git.vimdiff='git diff HEAD  | vim -'
+alias l="ls -lh"
+alias ls='ls -G'
+alias pip-rls='python setup.py sdist upload'
 
 export EDITOR=vim
 export COLUMNS

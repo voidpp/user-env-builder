@@ -6,7 +6,6 @@
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
     "editor.renderWhitespace": "none",
-    "python.linting.pylintArgs": ["--errors-only"],
     "python.pythonPath": "${env:PYTHON_EXECUTABLE}",
     "files.associations": {
         "*.conf": "ini"
