@@ -1,4 +1,5 @@
-- hosts: localhost
+- hosts: all
   roles:
     - devel
     - deverto
+    - magrathea
