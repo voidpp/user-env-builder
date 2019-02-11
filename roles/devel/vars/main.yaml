@@ -7,3 +7,4 @@ packages:
   - python3
   - mercurial
   - htop
+  - cmake
