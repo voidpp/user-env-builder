@@ -36,7 +36,6 @@ __get_prompt() {
 PROMPT_COMMAND=__get_prompt
 
 alias c='echo > /dev/null'
-alias cve="create-virtualenv"
 alias git.ca='git commit -a --amend -C HEAD'
 alias git.ds='git diff --cached'
 alias git.graph='git log --oneline --graph --decorate --all'
@@ -60,3 +59,10 @@ reworkon ()
 }
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+
+cve ()
+{
+    create-virtualenv "$@"
+    NAME=$(ls -t ~/.virtualenvs/ | head -1)
+    workon $NAME
+}
