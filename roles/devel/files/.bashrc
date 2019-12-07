@@ -12,7 +12,7 @@ ps_cyan='\[\e[1;36m\]'
 ps_white='\[\e[1;37m\]'
 ps_reset='\[\e[0m\]'
 
-export PATH=$PATH:~/bin
+export PATH=~/bin:$PATH
 
 __get_prompt() {
     local EXIT_CODE="$?"             # This needs to be first
@@ -63,6 +63,9 @@ reworkon ()
 cve ()
 {
     create-virtualenv "$@"
-    NAME=$(ls -t ~/.virtualenvs/ | head -1)
-    workon $NAME
+    if test -f /tmp/cve_new_venv; then
+        NAME=$(</tmp/cve_new_venv)
+        workon $NAME
+        rm /tmp/cve_new_venv
+    fi
 }

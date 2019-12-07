@@ -56,6 +56,8 @@ if not args.iamsure:
 try:
     res = check_output(['bash', '-c', 'source /usr/local/bin/virtualenvwrapper.sh && mkvirtualenv {} --python {}'.format(args.name, python_versions[args.python])])
     print(res.decode('utf-8'))
+    with open('/tmp/cve_new_venv', 'w') as f:
+        f.write(args.name)
 except CalledProcessError as e:
     print(e)
     exit(e.returncode)
