@@ -69,3 +69,25 @@ cve ()
         rm /tmp/cve_new_venv
     fi
 }
+
+ww ()
+{
+    workon $(basename `pwd`)
+}
+
+ipython ()
+{
+    if [ $VIRTUAL_ENV ]; then
+        EXECUTABLE="$VIRTUAL_ENV"/bin/ipython
+
+        if [ ! -f "$EXECUTABLE" ]; then
+            pip install ipython
+            reworkon
+        fi
+
+        $EXECUTABLE
+
+    else
+        /usr/local/bin/ipython
+    fi
+}
